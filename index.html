@@ -1,0 +1,98 @@
+<!doctype html>
+<meta charset="utf8">
+<title>Times Tables Practice</title>
+<script src=main.js></script>
+<style>
+
+  html {
+      background-color: #E1FCB6;
+  }
+
+  body {
+      margin: 0;
+  }
+
+  body, input, button {
+      font-family: sans-serif;
+      font-size: 20px;
+  }
+
+  h1 {
+      margin: 0;
+      padding: 0.5em;
+      background-color: #B6FCF3;
+  }
+  main {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+  }
+  ol#tables-select li {
+      display: block;
+  }
+  section {
+      margin: auto;
+  }
+  section div {
+      display: flex;
+      padding-top: 1em;
+  }
+  button#setup-start {
+      margin: auto;
+      padding: 1em;
+  }
+
+  div#questions-question {
+      padding: 2em;
+      font-size: 2em;
+  }
+
+  div#questions-question input {
+      font-size: 1em;
+  }
+
+  input#questions-answer {
+      width: 2em;
+  }
+</style>
+<main>
+<h1>Times Tables Practice</h1>
+<section id="setup" hidden>
+  <p>Select tables: <button id=setup-select-all>Select All</button> <button id=setup-select-none>Select None</button>
+  </p>
+  <ol id="tables-select">
+    <li><label><input type=checkbox value=2 times>2 times
+    <li><label><input type=checkbox value=3 times>3 times
+    <li><label><input type=checkbox value=4 times>4 times
+    <li><label><input type=checkbox value=5 times>5 times
+    <li><label><input type=checkbox value=6 times>6 times
+    <li><label><input type=checkbox value=7 times>7 times
+    <li><label><input type=checkbox value=8 times>8 times
+    <li><label><input type=checkbox value=9 times>9 times
+    <li><label><input type=checkbox value=10 times>10 times
+    <li><label><input type=checkbox value=11 times>11 times
+    <li><label><input type=checkbox value=12 times>12 times
+  </ol>
+  <div>
+    <label>Questions <input type=number value=25 id="setup-total-questions"></label>
+    <label><input type=checkbox id="setup-allow-corrections">Allow corrections</label>
+  </div>
+  <div id="setup-start-container">
+    <button id=setup-start>Start</button>
+  </div>
+</section>
+<section id="questions" hidden>
+  <div id="questions-question">
+    <output id="questions-number-1"></output>×<output id="questions-number-2"></output>=<input id="questions-answer"></input>
+    <output id="questions-incorrect" hidden>Try again!</output>
+  </div>
+  <div id="progress">
+    Question <output id="questions-current-question"></output>/<output id="questions-total-questions"></output>
+</section>
+<section id="results" hidden>
+  <p>You got <output id="results-correct-count"></output> / <output id="results-total-questions"></output> in <output id="results-time"></output>s (target time <output id="results-target-time"></output>s)
+  <p><output id="results-message"></output></p>
+  <div>
+    <button id="results-restart">Start again</button>
+  </div>
+</section>
