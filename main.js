@@ -28,7 +28,6 @@ class Section {
   }
 
   show() {
-    console.log("show", this.elem.id);
     this.sections.hideAll();
     this.elem.hidden = false;
   }
@@ -105,19 +104,20 @@ class Questions extends Section {
   }
 
   init(options) {
-    console.log(options);
     this.currentQuestion = 0;
     this.totalQuestions = options.totalQuestions;
     this.totalQuestionsControl.value = this.totalQuestions;
     this.tables = options.tables;
     this.allowCorrections = options.allowCorrections;
     this.questionsCorrect = 0;
+    this.isRepeat = false;
     this.startTime = new Date();
     this.next();
   }
 
   next() {
     this.answer.value = "";
+    this.isRepeat = false;
     if (this.currentQuestion == this.totalQuestions) {
       this.end();
     }
@@ -135,11 +135,14 @@ class Questions extends Section {
   check() {
     if (parseInt(this.numberOne.value) * parseInt(this.numberTwo.value) ===
         parseInt(this.answer.value)) {
-      this.questionsCorrect++;
+      if (!this.isRepeat) {
+        this.questionsCorrect++;
+      }
       this.next();
     } else {
       if (this.allowCorrections) {
         this.incorrect.hidden = false;
+        this.isRepeat = true;
       } else {
         this.next();
       }
@@ -184,7 +187,6 @@ class Results extends Section {
 }
 
 function init() {
-  console.log("init");
   const sections = new Sections({"setup": Setup,
                                  "questions": Questions,
                                  "results": Results});
