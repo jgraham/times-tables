@@ -27,8 +27,11 @@
       flex-direction: column;
       justify-content: center;
   }
-  ol#tables-select li {
+  ol > li {
       display: block;
+  }
+  ol#practice-questions > li {
+      margin-bottom: 1em;
   }
   section {
       margin: auto;
@@ -37,21 +40,26 @@
       display: flex;
       padding-top: 1em;
   }
-  button#setup-start {
+
+  div[hidden] {
+      display: none;
+  }
+
+  button.action {
       margin: auto;
       padding: 1em;
   }
 
-  div#questions-question {
+  .question {
       padding: 2em;
       font-size: 2em;
   }
 
-  div#questions-question input {
+  input {
       font-size: 1em;
   }
 
-  input#questions-answer {
+  input.answer {
       width: 2em;
   }
 </style>
@@ -78,12 +86,33 @@
     <label><input type=checkbox checked id="setup-allow-corrections">Allow corrections</label>
   </div>
   <div id="setup-start-container">
-    <button id=setup-start>Start</button>
+    <button id=setup-practice class=action>Practice</button>
+    <button id=setup-start class=action>Start Quiz</button>
+  </div>
+</section>
+<section id="practice" hidden>
+  <template id="practice-question">
+    <li class="question">
+      <output></output>×<output></output>=<input class="answer"></input>
+      <output hidden>Try again!</output>
+    </li>
+  </template>
+  <ol id="practice-questions">
+  </ol>
+  <div>
+    <button id="practice-check" class=action>Check</button>
+  </div>
+  <p id="practice-correct" hidden>
+    Well done!
+  </p>
+  <div id="practice-next" hidden>
+    <button id="practice-restart" class=action>Practice Again</button>
+    <button id="practice-start" class=action>Start Quiz</button>
   </div>
 </section>
 <section id="questions" hidden>
-  <div id="questions-question">
-    <output id="questions-number-1"></output>×<output id="questions-number-2"></output>=<input id="questions-answer"></input>
+  <div id="questions-question" class="question">
+    <output id="questions-number-1"></output>×<output id="questions-number-2"></output>=<input id="questions-answer" class="answer"></input>
     <output id="questions-incorrect" hidden>Try again!</output>
   </div>
   <div id="progress">
@@ -93,6 +122,6 @@
   <p>You got <output id="results-correct-count"></output> / <output id="results-total-questions"></output> in <output id="results-time"></output>s (target time <output id="results-target-time"></output>s)
   <p><output id="results-message"></output></p>
   <div>
-    <button id="results-restart">Start again</button>
+    <button id="results-restart" class=action>Start Again</button>
   </div>
 </section>

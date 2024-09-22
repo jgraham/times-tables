@@ -54,8 +54,11 @@ class Setup extends Section {
     this.totalQuestions = document.getElementById("setup-total-questions");
     this.allowCorrections = document.getElementById("setup-allow-corrections");
 
+    this.practiceButton = document.getElementById("setup-practice");
+    this.practiceButton.addEventListener("click", () => this.startPractice());
+
     this.startButton = document.getElementById("setup-start");
-    this.startButton.addEventListener("click", () => this.start());
+    this.startButton.addEventListener("click", () => this.startQuiz());
   }
 
   init() {
@@ -70,12 +73,106 @@ class Setup extends Section {
       this.startButton.disabled = this.selectedTables().length === 0;
   }
 
-  start() {
+  getOptions() {
+    return {totalQuestions: parseInt(this.totalQuestions.value),
+            allowCorrections: this.allowCorrections.checked,
+            tables: this.selectedTables()};
+  }
+
+  startQuiz() {
     const questions = this.sections.get("questions");
-    questions.init({questions: parseInt(this.totalQuestions.value),
-                    totalQuestions: parseInt(this.totalQuestions.value),
-                    allowCorrections: this.allowCorrections.checked,
-                    tables: this.selectedTables()});
+    questions.init(this.getOptions());
+    questions.show();
+  }
+
+  startPractice() {
+    const practice = this.sections.get("practice");
+    practice.init(this.getOptions());
+    practice.show();
+  }
+}
+
+class Practice extends Section {
+  constructor(elem, sections) {
+    super(elem, sections);
+    this.template = document.getElementById("practice-question");
+    this.questionsContainer = document.getElementById("practice-questions");
+
+    this.checkButton = document.getElementById("practice-check");
+    this.checkButton.addEventListener("click", () => this.check());
+
+    this.correctContainer = document.getElementById("practice-correct");
+    this.nextContainer = document.getElementById("practice-next");
+
+    this.restartButton = document.getElementById("practice-restart");
+    this.restartButton.addEventListener("click", () => this.restart());
+
+    this.startButton = document.getElementById("practice-start");
+    this.startButton.addEventListener("click", () => this.startQuiz());
+    this.questions = null;
+    this.options = null;
+  }
+
+  init(options) {
+    this.options = options;
+    this.questions = [];
+    this.correctContainer.hidden = true;
+    this.nextContainer.hidden = true;
+    for (const table of options.tables) {
+      for (var i=2; i<=12; i++) {
+        const question = this.addQuestion([i, table]);
+        this.questions.push(question);
+        this.questionsContainer.appendChild(question.elem);
+      }
+    }
+    this.questions[0].answerElem.focus();
+  }
+
+  addQuestion(operands) {
+    const question = this.template.content.cloneNode("true");
+    const answer = question.querySelector("input");
+    const [numberOne, numberTwo, incorrect] = Array.from(question.querySelectorAll("output"));
+    numberOne.textContent = operands[0];
+    numberTwo.textContent = operands[1];
+    answer.addEventListener("keypress", () => incorrect.hidden = true);
+    return {elem: question.children[0],
+            answerElem: answer,
+            incorrectElem: incorrect,
+            answer: operands[0] * operands[1]};
+  }
+
+  check() {
+    let allCorrect = true;
+    for (const question of this.questions) {
+      if (parseInt(question.answerElem.value) !== question.answer) {
+        question.incorrectElem.hidden = false;
+        allCorrect = false;
+      }
+    }
+    if (allCorrect) {
+      this.correctContainer.hidden = false;
+      this.nextContainer.hidden = false;
+    }
+  }
+
+  restart() {
+    this.correctContainer.hidden = true;
+    this.nextContainer.hidden = true;
+    for (const question of this.questions) {
+      question.answerElem.textContent = "";
+    }
+    this.questions[0].answerElem.focus();
+  }
+
+  startQuiz() {
+    for (const question of this.questions) {
+      this.questionsContainer.removeChild(question.elem);
+    }
+    this.questions = null;
+    const questions = this.sections.get("questions");
+    questions.init({totalQuestions: this.options.totalQuestions,
+                    allowCorrections: this.options.allowCorrections,
+                    tables: this.options.tables});
     questions.show();
   }
 }
@@ -188,6 +285,7 @@ class Results extends Section {
 
 function init() {
   const sections = new Sections({"setup": Setup,
+                                 "practice": Practice,
                                  "questions": Questions,
                                  "results": Results});
   const setup = sections.get("setup");
